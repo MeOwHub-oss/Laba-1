@@ -7,54 +7,23 @@ import (
   "github.com/stretchr/testify/assert"
 )
 
-
-func TestHandler(t *testing.T){
-  req,err := http.NewRequest("GET","http://localhost:8080/",nil)
-  if err != nil{
-    t.Fatalf("could not create request: %v",err)
+ func TestHandler(t *testing.T){
+   handler := http.HandlerFunc(mainHandler)
+    assert.HTTPStatusCode(t,handler,"GET","/",nil,http.StatusOK)
   }
-  
-  rec := httptest.NewRecorder()
-  handler := http.HandlerFunc(mainHandler)
-  handler.ServeHTTP(rec,req)
-  
-  assert.HTTPStatusCode(t,handler,"GET","/",nil,http.StatusOK)
-
-}
-
-func TestHandlerGetOrder(t *testing.T){
-  req,err := http.NewRequest("GET","http://localhost:8080/1",nil)
-  if err != nil{
-    t.Fatalf("could not create request: %v",err)
+  func TestHandlerGetById(t *testing.T){
+    handler := http.HandlerFunc(mainHandler)
+   assert.HTTPStatusCode(t,handler,"GET","/1",nil,http.StatusOK)
   }
-  
-  rec := httptest.NewRecorder()
-  handler := http.HandlerFunc(mainHandler)
-  handler.ServeHTTP(rec,req)
-  
-  assert.HTTPStatusCode(t,handler,"GET","/1",nil,http.StatusOK)
-}
-func TestHandlerDeleteOrder(t *testing.T){
-  req,err := http.NewRequest("DELETE","http://localhost:8080/1",nil)
-  if err != nil{
-    t.Fatalf("could not create request: %v",err)
+  func TestHandlerDeletById(t *testing.T){
+    handler := http.HandlerFunc(mainHandler)
+    assert.HTTPStatusCode(t,handler,"DELETE","/1",nil,http.StatusOK)
+ }
+  func TestHandlerPut(t *testing.T){
+    handler := http.HandlerFunc(mainHandler)
+    assert.HTTPStatusCode(t,handler,"PUT","/1",nil,http.StatusInternalServerError)
   }
-  
-  rec := httptest.NewRecorder()
-  handler := http.HandlerFunc(mainHandler)
-  handler.ServeHTTP(rec,req)
-  
-  assert.HTTPStatusCode(t,handler,"DELETE","/1",nil,http.StatusOK)
-}
-func TestHandlerPutOrder(t *testing.T){
-  req,err := http.NewRequest("PUT","http://localhost:8080/1",nil)
-  if err != nil{
-    t.Fatalf("could not create request: %v",err)
+  func TestHandlerPost(t *testing.T){
+    handler := http.HandlerFunc(mainHandler)
+    assert.HTTPStatusCode(t,handler,"POST","/1?id=1",nil,http.StatusBadRequest)
   }
-  
-  rec := httptest.NewRecorder()
-  handler := http.HandlerFunc(mainHandler)
-  handler.ServeHTTP(rec,req)
-  
-  assert.HTTPStatusCode(t,handler,"PUT","/1",nil,http.StatusBadRequest)
-}
